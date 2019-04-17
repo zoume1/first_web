@@ -78,40 +78,17 @@ export default {
     };
   },
   methods: {
-    post(e) {
-      this.$axios({
-        method: "post",
-        url: e,
-        data: {}
-      })
-        .then(function(res) {
-          return res;
-          //   console.log(res.data.data.a)
-        })
-        .catch(function(err) {
-          return err;
-        });
-    },
-    get(e) {
-      this.$axios({
-        method: "get",
-        url: e,
-        data: {}
-      })
-        .then(function(res) {
-          return res;
-        })
-        .catch(function(err) {
-          return err;
-        });
-    },
+   
     handleIconClick(ev) {
       console.log(ev);
     },
     handleSelect(key, keyPath) {
       var url =
         "https://www.easy-mock.com/mock/5cb688ed6e42965531956007/root/clichs";
-        this.post(url);
+    
+       this.$common.post(url, null, r => {
+         console.log(r)
+       })
       switch (key) {
         case "1":
           this.$router.push("/Page1");
