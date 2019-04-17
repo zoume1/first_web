@@ -74,21 +74,78 @@ export default {
   data() {
     return {
       searchCriteria: "",
-      breadcrumbItems: ["导航一"]
+      breadcrumbItems: ["导航一"],
+      url:"https://www.easy-mock.com/mock/5cb688ed6e42965531956007/root/clichs",
+
     };
   },
+  // 生命周期
+  beforeCreate: function() {
+    console.group("beforeCreate 创建前状态===============》");
+    // console.log("%c%s", "color:red", "el     : " + this.$el); //undefined
+    // console.log("%c%s", "color:red", "data   : " + this.$data); //undefined
+    // console.log("%c%s", "color:red", "message: " + this.message);
+  },
+  created: function() {
+    console.group("created 创建完毕状态===============》");
+     this.$common.post(this.url, null, r => {
+        console.log(r);
+      });
+    // console.log("%c%s", "color:red", "el     : " + this.$el); //undefined
+    // console.log("%c%s", "color:red", "data   : " + this.$data); //已被初始化
+    // console.log("%c%s", "color:red", "message: " + this.message); //已被初始化
+  },
+  beforeMount: function() {
+    console.group("beforeMount 挂载前状态===============》");
+    // console.log("%c%s", "color:red", "el     : " + this.$el); //已被初始化
+    // console.log(this.$el);
+    // console.log("%c%s", "color:red", "data   : " + this.$data); //已被初始化
+    // console.log("%c%s", "color:red", "message: " + this.message); //已被初始化
+  },
+  mounted: function() {
+    console.group("mounted 挂载结束状态===============》");
+    // console.log("%c%s", "color:red", "el     : " + this.$el); //已被初始化
+    // console.log(this.$el);
+    // console.log("%c%s", "color:red", "data   : " + this.$data); //已被初始化
+    // console.log("%c%s", "color:red", "message: " + this.message); //已被初始化
+  },
+  beforeUpdate: function() {
+    console.group("beforeUpdate 更新前状态===============》");
+    // console.log("%c%s", "color:red", "el     : " + this.$el);
+    // console.log(this.$el);
+    // console.log("%c%s", "color:red", "data   : " + this.$data);
+    // console.log("%c%s", "color:red", "message: " + this.message);
+  },
+  updated: function() {
+    console.group("updated 更新完成状态===============》");
+    // console.log("%c%s", "color:red", "el     : " + this.$el);
+    // console.log(this.$el);
+    // console.log("%c%s", "color:red", "data   : " + this.$data);
+    // console.log("%c%s", "color:red", "message: " + this.message);
+  },
+  beforeDestroy: function() {
+    console.group("beforeDestroy 销毁前状态===============》");
+    // console.log("%c%s", "color:red", "el     : " + this.$el);
+    // console.log(this.$el);
+    // console.log("%c%s", "color:red", "data   : " + this.$data);
+    // console.log("%c%s", "color:red", "message: " + this.message);
+  },
+  destroyed: function() {
+    console.group("destroyed 销毁完成状态===============》");
+    // console.log("%c%s", "color:red", "el     : " + this.$el);
+    // console.log(this.$el);
+    // console.log("%c%s", "color:red", "data   : " + this.$data);
+    // console.log("%c%s", "color:red", "message: " + this.message);
+  },
+  // 生命周期
+
   methods: {
-   
     handleIconClick(ev) {
       console.log(ev);
     },
     handleSelect(key, keyPath) {
-      var url =
-        "https://www.easy-mock.com/mock/5cb688ed6e42965531956007/root/clichs";
-    
-       this.$common.post(url, null, r => {
-         console.log(r)
-       })
+      
+     
       switch (key) {
         case "1":
           this.$router.push("/Page1");

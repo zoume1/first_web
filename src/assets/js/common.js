@@ -45,26 +45,14 @@ function apiAxios (method, url, params, success, failure) {
   withCredentials: false
  })
  .then(function (res) {
-  if (res.data.success === true) {
-   if (success) {
     success(res.data)
-   }
-  } else {
-   if (failure) {
-    failure(res.data)
-   } else {
-    // console.log(res.data)
-    success(res.data)
-    // window.alert('error: ' + JSON.stringify(res.data))
-   }
-  }
+    
  })
  .catch(function (err) {
-  let res = err.response
-  if (err) {
-    failure( res.status)
+ 
+    failure( err.status)
   //  window.alert('api error, HTTP CODE: ' + res.status)
-  }
+  
  })
 }
  
