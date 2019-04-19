@@ -4,14 +4,14 @@
     <el-input v-model="form.name"></el-input>
   </el-form-item>
   <el-form-item label="活动位置">
-       <el-select v-model="sheng" @change="choseProvince" placeholder="省级地区">
-          <el-option v-for="item in province" :key="item.id" :label="item.value" :value="item.id"></el-option>
+       <el-select v-model="form.sheng" @change="choseProvince" placeholder="省级地区">
+          <el-option v-for="item in form.province" :key="item.id" :label="item.value" :value="item.id"></el-option>
         </el-select>
-        <el-select v-model="shi" @change="choseCity" placeholder="市级地区">
-          <el-option v-for="item in shi1" :key="item.id" :label="item.value" :value="item.id"></el-option>
+        <el-select v-model="form.shi" @change="choseCity" placeholder="市级地区">
+          <el-option v-for="item in form.shi1" :key="item.id" :label="item.value" :value="item.id"></el-option>
         </el-select>
-        <el-select v-model="qu" @change="choseBlock" placeholder="区级地区">
-          <el-option v-for="item in qu1" :key="item.id" :label="item.value" :value="item.id"></el-option>
+        <el-select v-model="form.qu" @change="choseBlock" placeholder="区级地区">
+          <el-option v-for="item in form.qu1" :key="item.id" :label="item.value" :value="item.id"></el-option>
         </el-select>
   </el-form-item>
   <el-form-item label="活动区域">
@@ -69,9 +69,7 @@ import axios from "axios";
           type: [],
           resource: '',
           desc: '',
-        
-        },
-           mapJson: "../static/json/map.json",
+         
           province: "",
           sheng: "",
           shi: "",
@@ -80,6 +78,10 @@ import axios from "axios";
           qu1: [],
           city: "",
           block: ""
+        
+        },
+         mapJson: "../static/json/map.json",
+           
       }
     },
     methods: {
@@ -87,19 +89,21 @@ import axios from "axios";
          // 加载china地点数据，三级
     getCityData: function() {
       var that = this;
+      console.log(this.form.mapJson);
       axios
-        .get(this.mapJson)
+        .get(this.form.mapJson)
         .then(function(response) {
           console.log(response);
           if (response.status == 200) {
-            that.province = [];
-            that.city = [];
-            that.block = [];
+            that.form.province = [];
+            that.form.city = [];
+            that.form.block = [];
             // 省市区数据分类
+            console.log(data);
             for (var item in data) {
               if (item.match(/0000$/)) {
                 //省
-                that.province.push({
+                that.form.province.push({
                   id: item,
                   value: data[item],
                   children: []
@@ -113,24 +117,24 @@ import axios from "axios";
               }
             }
             // 分类市级
-            for (var index in that.province) {
-              for (var index1 in that.city) {
+            for (var index in that.form.province) {
+              for (var index1 in that.form.city) {
                 if (
-                  that.province[index].id.slice(0, 2) ===
-                  that.city[index1].id.slice(0, 2)
+                  that.form.province[index].id.slice(0, 2) ===
+                  that.form.city[index1].id.slice(0, 2)
                 ) {
-                  that.province[index].children.push(that.city[index1]);
+                  that.form.province[index].children.push(that.form.city[index1]);
                 }
               }
             }
             // 分类区级
-            for (var item1 in that.city) {
-              for (var item2 in that.block) {
+            for (var item1 in that.form.city) {
+              for (var item2 in that.form.block) {
                 if (
-                  that.block[item2].id.slice(0, 4) ===
-                  that.city[item1].id.slice(0, 4)
+                  that.form.block[item2].id.slice(0, 4) ===
+                  that.form.city[item1].id.slice(0, 4)
                 ) {
-                  that.city[item1].children.push(that.block[item2]);
+                  that.form.city[item1].children.push(that.form.block[item2]);
                 }
               }
             }
@@ -144,23 +148,23 @@ import axios from "axios";
     },
     // 选省
     choseProvince: function(e) {
-      for (var index2 in this.province) {
-        if (e === this.province[index2].id) {
-          this.shi1 = this.province[index2].children;
-          this.shi = this.province[index2].children[0].value;
-          this.qu1 = this.province[index2].children[0].children;
-          this.qu = this.province[index2].children[0].children[0].value;
-          this.E = this.qu1[0].id;
+      for (var index2 in this.form.province) {
+        if (e === this.form.province[index2].id) {
+          this.form.shi1 = this.form.province[index2].children;
+          this.form.shi = this.form.province[index2].children[0].value;
+          this.form.qu1 = this.form.province[index2].children[0].children;
+          this.form.qu = this.form.province[index2].children[0].children[0].value;
+          this.form.E = this.form.qu1[0].id;
         }
       }
     },
     // 选市
     choseCity: function(e) {
-      for (var index3 in this.city) {
-        if (e === this.city[index3].id) {
-          this.qu1 = this.city[index3].children;
-          this.qu = this.city[index3].children[0].value;
-          this.E = this.qu1[0].id;
+      for (var index3 in this.form.city) {
+        if (e === this.form.city[index3].id) {
+          this.form.qu1 = this.form.city[index3].children;
+          this.form.qu = this.form.city[index3].children[0].value;
+          this.form.E = this.form.qu1[0].id;
           // console.log(this.E)
         }
       }
@@ -176,6 +180,9 @@ import axios from "axios";
   },
   created: function() {
     this.getCityData();
+  },
+    mounted: function() {
+       
   },
  
     }
