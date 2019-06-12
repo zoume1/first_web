@@ -1,139 +1,103 @@
 <template>
-  <div class="linkage">
-    <div class="form_input">
-      <div class="lab">地理位置</div>
-      <div class="input">
-        <el-select v-model="sheng" @change="choseProvince" placeholder="省级地区">
-          <el-option v-for="item in province" :key="item.id" :label="item.value" :value="item.id"></el-option>
-        </el-select>
-        <el-select v-model="shi" @change="choseCity" placeholder="市级地区">
-          <el-option v-for="item in shi1" :key="item.id" :label="item.value" :value="item.id"></el-option>
-        </el-select>
-        <el-select v-model="qu" @change="choseBlock" placeholder="区级地区">
-          <el-option v-for="item in qu1" :key="item.id" :label="item.value" :value="item.id"></el-option>
-        </el-select>
-      </div>
-    </div>
+  <div class="title">
+    <div id="main" style="width: 600px;height:400px;"></div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
-export default {
-  data() {
-    return {
-      mapJson: "../static/json/map.json",
-      province: "",
-      sheng: "",
-      shi: "",
-      shi1: [],
-      qu: "",
-      qu1: [],
-      city: "",
-      block: ""
-    };
-  },
-  methods: {
-    // 加载china地点数据，三级
-    getCityData: function() {
-      var that = this;
-      axios
-        .get(this.mapJson)
-        .then(function(response) {
-          if (response.status == 200) {
-            var data = response.data;
-            that.province = [];
-            that.city = [];
-            that.block = [];
-            // 省市区数据分类
-            for (var item in data) {
-              if (item.match(/0000$/)) {
-                //省
-                that.province.push({
-                  id: item,
-                  value: data[item],
-                  children: []
-                });
-              } else if (item.match(/00$/)) {
-                //市
-                that.city.push({ id: item, value: data[item], children: [] });
-              } else {
-                //区
-                that.block.push({ id: item, value: data[item] });
+  export default {
+
+    data() {
+      return {
+        msg: 'Welcome to Your Vue.js App'
+      };
+    },
+    mounted(){
+      this.drawLine();
+    },
+    methods: {
+      drawLine(){
+        // 基于准备好的dom，初始化echarts实例
+        let myChart = this.$echarts.init(document.getElementById('main'));
+        // 绘制图表
+        // 绘制图表
+        myChart.setOption({
+          title: { text: '在Vue中使用echarts' },
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross',
+              crossStyle: {
+                color: '#999'
               }
             }
-            // 分类市级
-            for (var index in that.province) {
-              for (var index1 in that.city) {
-                if (
-                  that.province[index].id.slice(0, 2) ===
-                  that.city[index1].id.slice(0, 2)
-                ) {
-                  that.province[index].children.push(that.city[index1]);
-                }
+          },
+          toolbox: {
+            feature: {
+           /*   dataView: {show: true, readOnly: false},
+              magicType: {show: true, type: ['line', 'bar']},
+              restore: {show: true},
+              saveAsImage: {show: true}*/
+            }
+          },
+          legend: {
+            // data:['蒸发量','降水量','平均温度']
+          },
+          xAxis: [
+            {
+              type: 'category',
+              data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
+              axisPointer: {
+                type: 'shadow'
               }
             }
-            // 分类区级
-            for (var item1 in that.city) {
-              for (var item2 in that.block) {
-                if (
-                  that.block[item2].id.slice(0, 4) ===
-                  that.city[item1].id.slice(0, 4)
-                ) {
-                  that.city[item1].children.push(that.block[item2]);
-                }
+          ],
+          yAxis: [
+            {
+              type: 'value',
+              name: '水量',
+              min: 0,
+              max: 250,
+              interval: 50,
+              axisLabel: {
+                formatter: '{value} ml'
+              }
+            },
+            {
+              type: 'value',
+              name: '温度',
+              min: 0,
+              max: 25,
+              interval: 5,
+              axisLabel: {
+                formatter: '{value} °C'
               }
             }
-          } else {
-            console.log(response.status);
-          }
-        })
-        .catch(function(error) {
-          console.log(typeof +error);
+          ],
+          series: [
+            {
+              name:'蒸发量',
+              type:'bar',
+              data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
+            },
+            {
+              name:'降水量',
+              type:'bar',
+              data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+            },
+            {
+              name:'平均温度',
+              type:'line',
+              yAxisIndex: 1,
+              data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+            }
+          ]
         });
-    },
-    // 选省
-    choseProvince: function(e) {
-      for (var index2 in this.province) {
-        if (e === this.province[index2].id) {
-          this.shi1 = this.province[index2].children;
-          this.shi = this.province[index2].children[0].value;
-          this.qu1 = this.province[index2].children[0].children;
-          this.qu = this.province[index2].children[0].children[0].value;
-          this.E = this.qu1[0].id;
-        }
       }
     },
-    // 选市
-    choseCity: function(e) {
-      for (var index3 in this.city) {
-        if (e === this.city[index3].id) {
-          this.qu1 = this.city[index3].children;
-          this.qu = this.city[index3].children[0].value;
-          this.E = this.qu1[0].id;
-          // console.log(this.E)
-        }
-      }
-    },
-    // 选区
-    choseBlock: function(e) {
-      this.E = e;
-      // console.log(this.E)
-    }
-  },
-  created: function() {
-    this.getCityData();
-  }
-};
+  };
 </script>
 
-<style >
-.form_input {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-}
-.lab {
-  width: 100px;
-}
+<style>
+
 </style>
